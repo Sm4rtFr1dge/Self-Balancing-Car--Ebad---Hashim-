@@ -100,11 +100,10 @@ This loop repeats 200 times per second — faster than any human could possibly 
 |-----------|------|
 | **STM32F3 Discovery** | 72 MHz Cortex-M4 microcontroller, runs the control code |
 | **Keyestudio Motor Shield** | L298N H-bridge driver for the motors |
-| **2× GM37-520 DC motors** | Geared motors for the wheels (~150 RPM at 12V) |
+| **2× GM37-520 DC motors** | Geared motors for the wheels (~250 RPM at 12V) |
 | **L3GD20 Gyroscope** | 245 dps full-scale, ±8.75 mdps/digit, on the Discovery board (SPI) |
 | **LSM303DLHC Accelerometer** | ±2g range, on the Discovery board (I²C) |
 | **3D-printed chassis** | Holds everything together |
-| **LiPo battery** | 7.4V, powers motors and logic |
 
 ### Pin Mapping
 
@@ -215,11 +214,3 @@ You don't need to recompile to tune — modify the `#define` values at the top o
 - **The setpoint isn't always zero.** The "balanced" angle depends on the exact center of gravity, sensor mounting orientation, and battery position. Ours tuned to **-3.5°** to actually stand straight.
 - **Debug printing can break real-time systems.** Sending too much data over UART eats CPU time the control loop needs. We throttle output to 10 Hz to keep the 200 Hz loop healthy.
 - **Integral windup is real.** Without anti-windup clamping (`INTEGRAL_MAX = 500`), the I term saturates during a fall and the robot lurches violently when picked back up.
-
----
-
-## 🙏 Acknowledgments
-
-Built as part of the Embedded Systems Design Lab (EE/CE 376L) at Habib University.
-
-Special thanks to the course instructors for designing thoughtful labs that build up to this point, and to every embedded engineer on Stack Overflow who documented the same bugs we hit.
