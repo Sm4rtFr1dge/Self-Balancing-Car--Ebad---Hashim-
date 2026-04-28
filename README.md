@@ -100,10 +100,11 @@ This loop repeats 200 times per second — faster than any human could possibly 
 |-----------|------|
 | **STM32F3 Discovery** | 72 MHz Cortex-M4 microcontroller, runs the control code |
 | **Keyestudio Motor Shield** | L298N H-bridge driver for the motors |
-| **2× GM37-520 DC motors** | Geared motors for the wheels (~250 RPM at 12V) |
+| **2× GM37-520 DC motors** | Geared motors for the wheels (~150 RPM at 12V) |
 | **L3GD20 Gyroscope** | 245 dps full-scale, ±8.75 mdps/digit, on the Discovery board (SPI) |
 | **LSM303DLHC Accelerometer** | ±2g range, on the Discovery board (I²C) |
 | **3D-printed chassis** | Holds everything together |
+| **LiPo battery** | 7.4V, powers motors and logic |
 
 ### Pin Mapping
 
@@ -145,15 +146,20 @@ The interrupt **always wins** — even if the main loop is mid-`sprintf`, the IS
 ```
 project/
 ├── Core/
-│   ├── Inc/                 # Header files
+│   ├── Inc/
+│   │   ├── control.h        # Control module API + tunable parameters
+│   │   └── ...              # CubeMX-generated headers (main.h, etc.)
 │   └── Src/
-│       ├── main.c           # Entry point, ISR, control logic
-│       ├── stm32f3xx_it.c   # Hardware interrupt handlers
+│       ├── main.c           # Peripheral init, ISR dispatch, UART logging
+│       ├── control.c        # IMU, filter, PID, motors, encoders
+│       ├── stm32f3xx_it.c   # CubeMX-generated interrupt handlers
 │       └── ...
 ├── plot_sensors.py          # Real-time plotting on the host PC
 ├── README.md                # This file
 └── Lab11_Task1.ioc          # STM32CubeMX hardware config
 ```
+
+The firmware is split into two logical modules: `main.c` handles all the boilerplate (peripheral setup, ISR routing, UART output) while `control.c` owns the actual brains — sensor reading, filtering, the PID loop, motor commands, and encoder pulse counting. This keeps real-time control logic isolated from CubeMX-generated code, so regenerating the project never overwrites our work.
 
 ---
 
